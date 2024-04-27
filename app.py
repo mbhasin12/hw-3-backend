@@ -46,9 +46,6 @@ def process_csv():
             km = km.fit(principalComponents)
             sum_of_squared_distances.append(km.inertia_)
         optimal_k = sum_of_squared_distances.index(min(sum_of_squared_distances)) + 1
-
-        # K-Means with optimal_k
-        #optimal_k = 4
         kmeans = KMeans(n_clusters=optimal_k)
         df['cluster'] = kmeans.fit_predict(principalComponents)
 
@@ -57,10 +54,8 @@ def process_csv():
 
         print(pca_df.head(5))
 
-        # Convert the clustered data to JSON
         result_json = pca_df.to_json(orient='records')
 
-        # Save the JSON to S3
         result_key = f'results/{key}-result.json'
         s3_client.put_object(Body=result_json, Bucket=bucket_name, Key=result_key)
 
@@ -75,17 +70,14 @@ def process_csv():
             sum_of_squared_distances.append(km.inertia_)
         optimal_k = sum_of_squared_distances.index(min(sum_of_squared_distances)) + 1
 
-        # K-Means with optimal_k
-        #optimal_k = 4
+
         kmeans = KMeans(n_clusters=optimal_k)
         df['Cluster'] = kmeans.fit_predict(df)
 
         df.rename(columns={col: f'PCA{idx + 1}' for idx, col in enumerate(df.columns[:2])}, inplace=True)
 
-        # Convert the clustered data to JSON
         result_json = df.to_json(orient='records')
 
-        # Save the JSON to S3
         result_key = f'results/{key}-result.json'
         s3_client.put_object(Body=result_json, Bucket=bucket_name, Key=result_key)
 
