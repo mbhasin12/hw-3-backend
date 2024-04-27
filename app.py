@@ -6,11 +6,19 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from flask_cors import CORS
 from io import StringIO
-import numpy as np
+import os
 
 app = Flask(__name__)
 CORS(app)
-s3_client = boto3.client('s3')
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+)
 
 @app.route('/process-csv', methods=['POST'])
 def process_csv():
